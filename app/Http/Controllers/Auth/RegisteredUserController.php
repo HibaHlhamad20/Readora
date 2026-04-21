@@ -34,6 +34,8 @@ class RegisteredUserController extends Controller
         if($request->hasFile('user_image')){
             $path=$request->file('user_image')->store('Profiles','public');
         }
+          
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -52,8 +54,10 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        $token=$request->user()->createToken('auth_token')->plainTextToken;
         return response()->json([
             'message'=>'register successfully',
+            'acceses token'=>$token,
             'user'=>$user
         ],201);
         //->noContent();
