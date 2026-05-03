@@ -20,7 +20,9 @@ return new class extends Migration
             $table->text('user_image')->nullable();
             $table->string('role')->default('reader');
           //  $table->json('interests')->nullable();
-            $table->string('points')->default(0);
+            $table->integer('points')->default(0);
+            $table->decimal('wallet',12,2)->default(0);
+            $table->string('fcm_token')->nullable();
             
             $table->rememberToken();
             $table->timestamps();

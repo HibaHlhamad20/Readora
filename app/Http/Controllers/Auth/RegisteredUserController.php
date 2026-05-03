@@ -43,7 +43,8 @@ class RegisteredUserController extends Controller
            // 'interests'=>$request->interests,
             'user_image'=>$path,
             'role'=>'reader',
-            'points'=>0
+            'points'=>0,
+            'wallet'=>0
 
         ]);
 
@@ -73,15 +74,18 @@ class RegisteredUserController extends Controller
         'name' => ['sometimes', 'string', 'max:255'],
         'email' => ['sometimes', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
         'interests' => ['sometimes', 'array'], 
+        'interests.*'=>['exists:categories,id'],
         'user_image' => ['sometimes', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
     ]);
 
-   
+   if($request->has('name')){
     $user->name = $request->name;
+   }
+   if($request->has('email')){
     $user->email = $request->email;
-    
+   }
     if ($request->has('interests')) {
-        $user->interests = $request->interests;
+        $user->categories()->sync($request->interests);
     }
 
     
@@ -92,6 +96,7 @@ class RegisteredUserController extends Controller
     }
 
     $user->save();
+    $user->load('categories');
 
     return response()->json([
         'message' => 'تم تحديث الملف الشخصي بنجاح',

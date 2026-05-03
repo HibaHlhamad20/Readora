@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\PasswordResetController;
+use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AuthorController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\BookController;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 
 Route::middleware(['auth:sanctum'])->group(function(){
@@ -24,6 +26,18 @@ Route::middleware(['auth:sanctum'])->group(function(){
 
 //عرض 30 اقتراح كتاب حسب اهتمامات المستخدم
 Route::get('/books/recommended',[BookController::class,'showBooksByUserInterests']);
+//لشحن المحفظة  هاد يلي لازم تربطيه نور
+Route::post('/wallet_charge',[WalletController::class,'sendChargingRequest']);
+
+
+//راوتات الادمن 
+ Route::middleware('admin')->group(function()
+ {
+    Route::get('/pending_request',[WalletController::class,'getPendingRequet']);
+    Route::post('/approve_request/{id}',[WalletController::class,'approveRequest']);
+    Route::post('/reject_request/{id}',[WalletController::class,'rejectRequest']);
+
+ });
 });
 //without middleware
 //1
@@ -36,6 +50,7 @@ Route::post('/password/forgot', [PasswordResetController::class, 'sendOtp']);
 Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
 //5
 Route::get('/categories',[CategoryController::class,'index']);
+
 
 //إضافة مؤلف
 Route::post('/authors',[AuthorController::class,'addAuthor']);
@@ -65,3 +80,5 @@ Route::get('/books/recommended',[BookController::class,'showBooksByUserInterests
 
 
 
+//5|GugMoPhG2n32DHQVdbH96KT2EBaByXe9IF93sUXx94ee45b6
+//6|ZYhfXldxJ6bzfo7Tw0FfokCGZdpkmaZ6wVrWArZl0f070c15

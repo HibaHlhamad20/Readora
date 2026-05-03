@@ -19,7 +19,7 @@ class AuthenticatedSessionController extends Controller
         
         $token=$request->user()->createToken('auth_token')->plainTextToken;
 
-        $request->session()->regenerate();
+        //$request->session()->regenerate();
 
         return response()->json([
             'message'=>'success',
@@ -43,3 +43,4 @@ class AuthenticatedSessionController extends Controller
         return response()->noContent();
     }
 }
+//3|7rgyjhIAwGBZFBky02cC6YhkVwdUkDE29OSjvP7qb56848e7//admin

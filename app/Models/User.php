@@ -25,7 +25,9 @@ class User extends Authenticatable
         'email',
         'password',
         'interests',
-        'user_image'
+        'user_image',
+        'wallet',
+        'fcm_token'
     ];
 
     /**
