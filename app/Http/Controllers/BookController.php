@@ -117,6 +117,12 @@ class BookController extends Controller
         return response()->json($books, 200);
     }
 
+    public function showBookDetails ($id)
+    {
+        $book=Book::findOrFail($id);
+        return response()->json($book, 200);
+    }
+
 
 
 }

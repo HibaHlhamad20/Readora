@@ -76,6 +76,10 @@ Route::get('/books/top-rated',[BookController::class,'showBooksByRating']);
 Route::get('/books/new',[BookController::class,'showNewBooks']);
 //عرض 30 اقتراح كتاب حسب اهتمامات المستخدم
 Route::get('/books/recommended',[BookController::class,'showBooksByUserInterests']);
+//عرض تفاصيل الكتاب 
+Route::get('/books/details/{id}',[BookController::class,'showBookDetails']);
+
+
 
 
 
