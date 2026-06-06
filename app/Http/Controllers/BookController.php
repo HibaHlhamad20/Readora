@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SearchBookRequest;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Author;
@@ -123,6 +124,69 @@ class BookController extends Controller
         return response()->json($book, 200);
     }
 
+    public function searchBooks (SearchBookRequest $request)
+    {
+        $book = Book::with('authors','categories');
 
+        if ($request->filled('book_name'))
+            $book->where('book_name', 'LIKE', '%'.$request->book_name.'%');
+
+        if ($request->filled('language'))
+            $book->where('language', $request->language);
+
+        if ($request->filled('number_of_pages_from'))
+            $book->where('number_of_pages', '>=', $request->number_of_pages_from);
+
+        if ($request->filled('number_of_pages_to'))
+            $book->where('number_of_pages', '<=', $request->number_of_pages_to);
+
+        if ($request->filled('selling_price_from'))
+            $book->where('selling_price', '>=', $request->selling_price_from);
+
+        if ($request->filled('selling_price_to'))
+            $book->where('selling_price', '<=', $request->selling_price_to);
+
+        if ($request->filled('rental_price_from'))
+            $book->where('rental_price', '>=', $request->rental_price_from);
+
+        if ($request->filled('rental_price_to'))
+            $book->where('rental_price', '<=', $request->rental_price_to);
+
+        if ($request->filled('author_id')) {
+            $book->whereHas('authors',function ($query) use ($request) {
+                $query->where('author_id',$request->author_id);
+            });         
+        }
+
+        if ($request->filled('category_id')) {
+            $book->whereHas('categories',function ($query) use ($request) {
+                $query->where('category_id',$request->category_id);
+            });
+        }
+
+        $books = $book->get();
+
+        return response()->json($books, 200);
+    }
+
+    public function addToFavourite ($id)
+    {
+        $book=Book::findOrFail($id);
+        Auth::user()->favouriteBooks()->syncWithoutDetaching($id);
+        return response()->json(['message'=>'Book added to favourite successfully','data'=>$book], 200);
+    }
+
+    public function removeFromFavourite ($id)
+    {
+        Auth::user()->favouriteBooks()->detach($id);
+        return response()->json(['message'=>'Book removed from favourite successfully','data'=>$book], 200);
+    }
+
+    public function showFavourites ()
+    {
+        $books=Auth::user()->favouriteBooks()->get();
+        return response()->json($books, 200);
+    }
+    
 
 }

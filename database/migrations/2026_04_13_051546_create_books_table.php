@@ -20,8 +20,10 @@ return new class extends Migration
             'french','turkish','urdu','italian']);
             $table->integer('number_of_pages');
             $table->decimal('selling_price',10,2);
-            $table->decimal('rental_price');
+            $table->decimal('rental_price',10,2);
             $table->integer('number_of_reads')->default(0);
+            $table->integer('rating_sum')->default(0);
+            $table->integer('rating_count')->default(0);
             $table->decimal('rating',3,2)->default(0);
             $table->string('book_file');
             $table->string('cover_image');

@@ -37,6 +37,20 @@ Route::post('/wallet_charge',[WalletController::class,'sendChargingRequest']);
     Route::post('/approve_request/{id}',[WalletController::class,'approveRequest']);
     Route::post('/reject_request/{id}',[WalletController::class,'rejectRequest']);
 
+    //إضافة مؤلف
+    Route::post('/authors',[AuthorController::class,'addAuthor']);
+    //تعديل بيانات مؤلف
+    Route::put('/authors/{id}',[AuthorController::class,'updateAuthor']);
+    //حذف مؤلف
+    Route::delete('/authors/{id}',[AuthorController::class,'deleteAuthor']);
+
+    //إضافة كتاب
+    Route::post('/books',[BookController::class,'addBook']);
+    //تعديل بيانات كتاب
+    Route::put('/books/{id}',[BookController::class,'updateBook']);
+    //حذف كتاب
+    Route::delete('/books/{id}',[BookController::class,'deleteBook']);
+
  });
 });
 //without middleware
@@ -51,25 +65,10 @@ Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']
 //5
 Route::get('/categories',[CategoryController::class,'index']);
 
-
-//إضافة مؤلف
-Route::post('/authors',[AuthorController::class,'addAuthor']);
-//تعديل بيانات مؤلف
-Route::put('/authors/{id}',[AuthorController::class,'updateAuthor']);
-//حذف مؤلف
-Route::delete('/authors/{id}',[AuthorController::class,'deleteAuthor']);
 //عرض جميع المؤلفين
 Route::get('/authors',[AuthorController::class,'showAuthors']);
-
-//إضافة كتاب
-Route::post('/books',[BookController::class,'addBook']);
-//تعديل بيانات كتاب
-Route::put('/books/{id}',[BookController::class,'updateBook']);
-//حذف كتاب
-Route::delete('/books/{id}',[BookController::class,'deleteBook']);
 //عرض جميع الكتب مرتبة من الأحدث للأقدم
 Route::get('/books',[BookController::class,'showBooks']);
-
 //عرض أعلى 30 كتاب تقييماً
 Route::get('/books/top-rated',[BookController::class,'showBooksByRating']);
 //عرض آخر 30 كتاب مضاف
@@ -78,10 +77,21 @@ Route::get('/books/new',[BookController::class,'showNewBooks']);
 Route::get('/books/recommended',[BookController::class,'showBooksByUserInterests']);
 //عرض تفاصيل الكتاب 
 Route::get('/books/details/{id}',[BookController::class,'showBookDetails']);
+//عرض الكتب مع فلترة للبحث
+Route::get('/books/search',[BookController::class,'searchBooks']);
 
+ Route::middleware('user')->group(function()
+ {
 
+//المفضلة
+//إضافة كتاب للمفضلة
+Route::post('/books/{id}/favourite',[BookController::class,'addToFavourite']);
+//حذف كتاب من المفضلة
+Route::delete('/books/{id}/favourite',[BookController::class,'removeFromFavourite']);
+//عرض جميع الكتب في المفضلة
+Route::get('/books/favourite',[BookController::class,'showFavourites']);
 
-
+ });
 
 
 //5|GugMoPhG2n32DHQVdbH96KT2EBaByXe9IF93sUXx94ee45b6

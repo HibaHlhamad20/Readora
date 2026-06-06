@@ -18,4 +18,8 @@ class Book extends Model
         return $this->belongsToMany(Category::class,'category_book');
     }
 
+    public function favouriteByUser(){
+        return $this->belongsToMany(User::class,'favourites');
+    }
+
 }
