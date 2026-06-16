@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\AdminAuthController;
+use App\Http\Controllers\Api\AdminDashboardController;
+use App\Http\Controllers\Api\BookActionController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\WalletController;
@@ -7,6 +10,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
+
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,9 +33,15 @@ Route::get('/books/recommended',[BookController::class,'showBooksByUserInterests
 //لشحن المحفظة  هاد يلي لازم تربطيه نور
 Route::post('/wallet_charge',[WalletController::class,'sendChargingRequest']);
 
+//الشراء
+Route::post('/user/book/purchase',[BookActionController::class,'purchase']);
+//الاستعارة
+Route::post('/user/book/borrow',[BookActionController::class,'borrow']);
+//has_access
+Route::get('/user/book/{book_id}/check_access',[BookActionController::class,'checkAccess']);
 
 //راوتات الادمن 
- Route::middleware('admin')->group(function()
+Route::middleware('admin')->group(function()
  {
     Route::get('/pending_request',[WalletController::class,'getPendingRequet']);
     Route::post('/approve_request/{id}',[WalletController::class,'approveRequest']);
@@ -50,10 +60,14 @@ Route::post('/wallet_charge',[WalletController::class,'sendChargingRequest']);
     Route::put('/books/{id}',[BookController::class,'updateBook']);
     //حذف كتاب
     Route::delete('/books/{id}',[BookController::class,'deleteBook']);
+    //الاحصائيات باول واجهة
+    Route::get('/admin/dashboard/statistics',[AdminDashboardController::class,'getStatistics']);
 
  });
 });
 //without middleware
+//راوت تسجيل دخول الادمن جودي
+Route::post('/admin_login',[AdminAuthController::class,'login']);
 //1
 Route::post('/register', [RegisteredUserController::class, 'store']);
 //2

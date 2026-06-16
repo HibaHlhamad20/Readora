@@ -16,7 +16,13 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request)
     {
         $request->authenticate();
-        
+        $user=$request->user();
+        if($request->has('fcm_token')){
+            $user->update([
+                'fcm_token'=>$request->fcm_token
+            ]);
+        }
+
         $token=$request->user()->createToken('auth_token')->plainTextToken;
 
         //$request->session()->regenerate();

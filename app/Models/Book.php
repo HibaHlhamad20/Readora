@@ -20,6 +20,14 @@ class Book extends Model
 
     public function favouriteByUser(){
         return $this->belongsToMany(User::class,'favourites');
+        }
+
+    public function purchases(){
+        return $this->hasMany(Purchase::class);
+    }
+
+    public function borrowings(){
+        return $this->hasMany(Borrowing::class);
     }
 
 }

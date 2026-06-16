@@ -28,6 +28,7 @@ class RegisteredUserController extends Controller
             'interests'=>['required','array'],
             'interests.*'=>['exists:categories,id'],
             'user_image'=>['nullable','image','mimes:jpg,jpeg,png','max:2048'],
+            'fcm_token'=>['nullable','string'],
         ]);
 
         $path=null;
@@ -44,7 +45,8 @@ class RegisteredUserController extends Controller
             'user_image'=>$path,
             'role'=>'reader',
             'points'=>0,
-            'wallet'=>0
+            'wallet'=>0,
+            'fcm_token'=>$request->fcm_token,
 
         ]);
 

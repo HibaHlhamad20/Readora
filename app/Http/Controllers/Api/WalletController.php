@@ -7,6 +7,7 @@ use App\Models\ChargingRequest;
 //use Illuminate\Container\Attributes\DB;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Services\FirebaseService;
 
 class WalletController extends Controller
 {
@@ -55,6 +56,13 @@ class WalletController extends Controller
             ]);
             $user=$chargingRequest->user;
             $user->increment('wallet',$chargingRequest->amount);
+
+            FirebaseService::sentNotification(
+                $user->fcm_token,
+               'تم شحن رصيدك بنجاح! ✅', 
+               " المبلغ: {$chargingRequest->amount} ل.س"
+            );
+
             DB::commit();//هون يعني بقول للداتابيز اعتمدي التغييرات يلي صارت
             return response()->json([
                 'message'=>'تمت الموافقة وشحن الرصيد بنجاح',
@@ -84,6 +92,14 @@ class WalletController extends Controller
             'status'=>'rejected',
             'rejection_reason'=>$request->rejection_reason,
         ]);
+
+         $user=$chargingRequest->user;
+         FirebaseService::sentNotification(
+            $user->fcm_token,
+            'عذرا، تم رفض طلب الشحن ❌',
+            "السبب: " . $request->rejection_reason
+         );
+
         return response()->json([
             'message'=>'تم رفض الطلب',
             'reason'=>$request->rejection_reason,
