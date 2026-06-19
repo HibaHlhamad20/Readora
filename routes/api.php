@@ -62,9 +62,12 @@ Route::middleware('admin')->group(function()
     Route::delete('/books/{id}',[BookController::class,'deleteBook']);
     //الاحصائيات باول واجهة
     Route::get('/admin/dashboard/statistics',[AdminDashboardController::class,'getStatistics']);
+    //ادارة المستخدمين
+    Route::get('/admin/users', [AdminDashboardController::class, 'getAllUsers']); 
+    Route::get('/admin/users/{id}', [AdminDashboardController::class, 'getUserDetails']); 
 
  });
-});
+});  
 //without middleware
 //راوت تسجيل دخول الادمن جودي
 Route::post('/admin_login',[AdminAuthController::class,'login']);
@@ -76,7 +79,7 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::post('/password/forgot', [PasswordResetController::class, 'sendOtp']);
 //4
 Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
-//5
+//5جودي
 Route::get('/categories',[CategoryController::class,'index']);
 
 //عرض جميع المؤلفين

@@ -29,19 +29,19 @@ class User extends Authenticatable
         'wallet',
         'fcm_token'
     ];
-    protected $appends = ['level'];
-    public function getLevelAttribute(){
-        $points=$this->points;
-        if($points >=300){
-            return 'diamond';
-        }
-        elseif($points >=200){
-            return 'gold';
-        }elseif($points >=100){
-            return 'bronze';
-        }else
-        return null;
-    }
+    // protected $appends = ['level'];
+    // public function getLevelAttribute(){
+    //     $points=$this->points;
+    //     if($points >=300){
+    //         return 'diamond';
+    //     }
+    //     elseif($points >=200){
+    //         return 'gold';
+    //     }elseif($points >=100){
+    //         return 'bronze';
+    //     }else
+    //     return null;
+    // }
 
     /**
      * The attributes that should be hidden for serialization.

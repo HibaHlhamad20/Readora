@@ -89,4 +89,41 @@ class AdminDashboardController extends Controller
             'chart_data' => $chartData
         ], 200);
     }
+
+//......................................................
+
+
+
+
+public function getAllUsers(){
+
+
+    $users = User::select('id', 'name', 'email','created_at')
+                 ->latest()
+                 ->get();
+
+    return response()->json([
+        'users' => $users
+    ], 200);
+}
+
+
+public function getUserDetails($id)
+{
+
+    $user = User::findOrFail($id);
+
+    
+    $purchasesCount = $user->purchases()->count();
+    $borrowingsCount = $user->borrowings()->count();
+
+    return response()->json([
+        'user' => $user,
+        'statistics' => [
+            'purchases_count' => $purchasesCount,
+            'borrowings_count' => $borrowingsCount
+        ]
+    ], 200);
+}
+
 }
