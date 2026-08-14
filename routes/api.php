@@ -10,7 +10,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
-
+use App\Http\Controllers\QuizController;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -39,7 +39,10 @@ Route::post('/user/book/purchase',[BookActionController::class,'purchase']);
 Route::post('/user/book/borrow',[BookActionController::class,'borrow']);
 //has_access
 Route::get('/user/book/{book_id}/check_access',[BookActionController::class,'checkAccess']);
-
+//جلب ال3 اسئلة تبع كتاب محدد
+Route::get('/user/books/{book_id}/quiz',[QuizController::class,'getQuizQuestions']);
+//لتصحيح الاسئلة وحساب النقاط
+Route::post('/user/quiz/submit',[QuizController::class,'submitQuiz']);
 //راوتات الادمن 
 Route::middleware('admin')->group(function()
  {

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Question;
 
 class Book extends Model
 {
@@ -28,6 +29,10 @@ class Book extends Model
 
     public function borrowings(){
         return $this->hasMany(Borrowing::class);
+    }
+
+    public function questions(){
+        return $this->hasMany(Question::class);
     }
 
 }

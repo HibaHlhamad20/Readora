@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-
+use App\Models\Question;
 class BookController extends Controller
 {
     
@@ -26,7 +26,19 @@ class BookController extends Controller
         $book = Book::create(Arr::except($validatedData, ['author_ids','category_ids']));
         $book->authors()->sync($request->author_ids);
         $book->categories()->sync($request->category_ids); 
-        return response()->json(['message'=>'Book has been added successfully','data'=>$book], 201);
+
+       if ($request->has('questions')) {
+        foreach ($request->questions as $qData) {
+            $book->questions()->create([
+                'question_text' => $qData['question_text'],
+                'options' => $qData['options'], 
+                'correct_answer' => $qData['correct_answer'], 
+            ]);
+            }
+        }
+        return response()->json(['message'=>'Book has been added successfully',
+        'data'=>$book->load('questions')],
+         201);
     }
 
     public function updateBook (UpdateBookRequest $request,$id)
