@@ -55,8 +55,8 @@ class PasswordResetController extends Controller
             ->where('token', $request->otp)
             ->first();
 
-        
-        if (!$resetData || Carbon::parse($resetData->created_at)->addMinutes(15)->isPast()) {
+        ////عدلت عالوقت 
+        if (!$resetData || Carbon::parse($resetData->created_at)->addMinutes(3)->isPast()) {
             return response()->json(['message' => 'الرمز غير صحيح أو انتهت صلاحيته!'], 422);
         }
 

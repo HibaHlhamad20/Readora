@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Question;
+
 class BookController extends Controller
 {
     
@@ -26,19 +26,7 @@ class BookController extends Controller
         $book = Book::create(Arr::except($validatedData, ['author_ids','category_ids']));
         $book->authors()->sync($request->author_ids);
         $book->categories()->sync($request->category_ids); 
-
-       if ($request->has('questions')) {
-        foreach ($request->questions as $qData) {
-            $book->questions()->create([
-                'question_text' => $qData['question_text'],
-                'options' => $qData['options'], 
-                'correct_answer' => $qData['correct_answer'], 
-            ]);
-            }
-        }
-        return response()->json(['message'=>'Book has been added successfully',
-        'data'=>$book->load('questions')],
-         201);
+        return response()->json(['message'=>'Book has been added successfully','data'=>$book], 201);
     }
 
     public function updateBook (UpdateBookRequest $request,$id)
@@ -106,29 +94,55 @@ class BookController extends Controller
 
     public function showBooksByRating()
     {
-        $books = Book::with(['authors','categories'])->orderBy('rating','desc')->limit(30)->get();
+        $books = Book::with(['authors','categories'])
+        ->where('rating', '>', 0)//ضفت هي 
+        ->orderBy('rating','desc')
+        ->limit(30)->get();
 
         return response()->json($books, 200);
     }
 
-    public function showNewBooks()
-    {
-        $books = Book::orderBy('created_at','desc')->limit(30)->get();
+    // public function showNewBooks()
+    // {
+    //     $books = Book::orderBy('created_at','desc')->limit(30)->get();
 
-        return response()->json($books, 200);
-    }
+    //     return response()->json($books, 200);
+    // }
+    //عدلت لحتى يطلع اسم المؤلف
+public function showNewBooks()
+{
+    $books = Book::with(['authors','categories'])
+                 ->orderBy('created_at','desc')
+                 ->limit(30)
+                 ->get();
 
+    return response()->json($books, 200);
+}
+    // public function showBooksByUserInterests()
+    // {
+    //     $categoryIds = Auth::user()->categories->pluck('id');
+
+    //     $books = Book::whereHas('categories',function ($query) use ($categoryIds)
+    //     {
+    //         $query->WhereIn ('categories.id',$categoryIds);
+    //     })->limit(30)->get();
+
+    //     return response()->json($books, 200);
+    // }
+//ضفت اسم الكؤلف
     public function showBooksByUserInterests()
-    {
-        $categoryIds = Auth::user()->categories->pluck('id');
+{
+    $categoryIds = Auth::user()->categories->pluck('id');
 
-        $books = Book::whereHas('categories',function ($query) use ($categoryIds)
-        {
-            $query->WhereIn ('categories.id',$categoryIds);
-        })->limit(30)->get();
+    $books = Book::with(['authors', 'categories']) //   
+        ->whereHas('categories', function ($query) use ($categoryIds) {
+            $query->whereIn('categories.id', $categoryIds);
+        })
+        ->limit(30)
+        ->get();
 
-        return response()->json($books, 200);
-    }
+    return response()->json($books, 200);
+}
 
     public function showBookDetails ($id)
     {
