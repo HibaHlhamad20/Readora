@@ -24,7 +24,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'interests',
+       // 'interests',
         'user_image',
         'wallet',
         'fcm_token'
@@ -63,7 +63,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'interests'=>'array'
+           // 'interests'=>'array'
         ];
     }
     public function categories(){

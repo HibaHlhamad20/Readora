@@ -10,11 +10,10 @@ class CategoryController extends Controller
 {
     
     public function index(){
-        return response()->json([
+        return response()->json(
             Category::all([
                 'id',
                 'name'
-            ]),
-        ],200);
+            ]),200);
     }
 }

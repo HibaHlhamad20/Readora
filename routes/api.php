@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum'])->group(function(){
 //1
     Route::get('/user', function (Request $request) {
-    return $request->user();
+    return $request->user()->load('categories');
 });
 
 //2
