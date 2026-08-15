@@ -9,7 +9,6 @@ use App\Models\Purchase;
 use App\Models\Borrowing;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use App\Models\Question;
 
 class BookActionController extends Controller
 {
@@ -194,9 +193,4 @@ class BookActionController extends Controller
             'message'=>'عذرا هذا الكتاب مغلق ! يجب عليك شراؤه او استعارته'
         ],200);
     }
-
-
-
-
-
 }
