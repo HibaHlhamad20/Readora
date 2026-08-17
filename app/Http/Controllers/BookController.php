@@ -218,7 +218,7 @@ public function showNewBooks()
     public function removeFromFavourite ($id)
     {
         Auth::user()->favouriteBooks()->detach($id);
-        return response()->json(['message'=>'Book removed from favourite successfully','data'=>$book], 200);
+        return response()->json(['message'=>'Book removed from favourite successfully','data'=>null], 200);
     }
 
     public function showFavourites ()

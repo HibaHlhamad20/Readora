@@ -87,4 +87,8 @@ class User extends Authenticatable
     public function borrowings(){
         return $this->hasMany(Borrowing::class);
     }
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
+
 }

@@ -12,13 +12,29 @@ use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CommentController;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
-
 Route::middleware(['auth:sanctum'])->group(function(){
+
+    //التعليقات
+    //إضافة تعليق
+    Route::post('comments/{bookId}',[CommentController::class,'addComment']);
+    //حذف تعليق
+    Route::delete('/comments/{commentId}',[CommentController::class,'deleteComment']);
+    //عرض جميع التعليقات على كتاب معين
+    Route::get('/comments/{bookId}',[CommentController::class,'showComments']);
+
+    //المفضلة
+    //إضافة كتاب للمفضلة
+    Route::post('/books/{id}/favourite',[BookController::class,'addToFavourite']);
+    //حذف كتاب من المفضلة
+    Route::delete('/books/{id}/favourite',[BookController::class,'removeFromFavourite']);
+    //عرض جميع الكتب في المفضلة
+    Route::get('/books/favourite',[BookController::class,'showFavourites']);
+
 //1
     Route::get('/user', function (Request $request) {
     return $request->user()->load('categories');
@@ -29,8 +45,6 @@ Route::middleware(['auth:sanctum'])->group(function(){
 //3
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
 
-//عرض 30 اقتراح كتاب حسب اهتمامات المستخدم
-Route::get('/books/recommended',[BookController::class,'showBooksByUserInterests']);
 //لشحن المحفظة  هاد يلي لازم تربطيه نور
 Route::post('/wallet_charge',[WalletController::class,'sendChargingRequest']);
 
@@ -83,6 +97,21 @@ Route::middleware('admin')->group(function()
 
  });
 });  
+
+//   Route::middleware('user')->group(function()
+//  {
+//     //عرض 30 اقتراح كتاب حسب اهتمامات المستخدم
+//     Route::get('/books/recommended',[BookController::class,'showBooksByUserInterests']);
+//     //المفضلة
+//     //إضافة كتاب للمفضلة
+//     Route::post('/books/{id}/favourite',[BookController::class,'addToFavourite']);
+//     //حذف كتاب من المفضلة
+//     Route::delete('/books/{id}/favourite',[BookController::class,'removeFromFavourite']);
+//     //عرض جميع الكتب في المفضلة
+//     Route::get('/books/favourite',[BookController::class,'showFavourites']);
+
+//  });
+
 //without middleware
 //راوت تسجيل دخول الادمن جودي
 Route::post('/admin_login',[AdminAuthController::class,'login']);
@@ -115,17 +144,17 @@ Route::get('/books/search',[BookController::class,'searchBooks']);
 //  Route::middleware('user')->group(function()
 //  {
 //عدلت هون
-Route::middleware(['auth:sanctum'])->group(function()
-{
-//المفضلة
-//إضافة كتاب للمفضلة
-Route::post('/books/{id}/favourite',[BookController::class,'addToFavourite']);
-//حذف كتاب من المفضلة
-Route::delete('/books/{id}/favourite',[BookController::class,'removeFromFavourite']);
-//عرض جميع الكتب في المفضلة
-Route::get('/books/favourite',[BookController::class,'showFavourites']);
+// Route::middleware(['auth:sanctum'])->group(function()
+// {
+// //المفضلة
+// //إضافة كتاب للمفضلة
+// Route::post('/books/{id}/favourite',[BookController::class,'addToFavourite']);
+// //حذف كتاب من المفضلة
+// Route::delete('/books/{id}/favourite',[BookController::class,'removeFromFavourite']);
+// //عرض جميع الكتب في المفضلة
+// Route::get('/books/favourite',[BookController::class,'showFavourites']);
 
- });
+//  });
 
 //1|h1nlWxHbF2slIOzkfMq0pjkl7Vy6yRqS4LGMCbJe93bb67bb//user
 //2|3ZPxmUWwSA6FuJvbPi80SF2YB3iLyS8Ym6fS5HQIc29a55a3
