@@ -72,6 +72,12 @@ class User extends Authenticatable
     public function favouriteBooks(){
         return $this->belongsToMany(Book::class,'favourites');
     }
+    public function completedBooks()
+    {
+    return $this->belongsToMany(Book::class, 'book_user')
+                ->withPivot('points', 'created_at')
+                ->withTimestamps();
+    }
 
 
     public function purchases(){

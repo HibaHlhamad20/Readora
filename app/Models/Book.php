@@ -30,4 +30,13 @@ class Book extends Model
         return $this->hasMany(Borrowing::class);
     }
 
+    public function questions(){
+        return $this->hasMany(Question::class);
+    }
+
+    public function completeByUsers(){
+        return $this->belongsToMany(User::class,'book_user')->withPivot('points','created_at');
+    }
+
+
 }

@@ -96,7 +96,8 @@ public function submitQuiz(Request $request)
         if ($pointsToEarn > 0) {
             $user->increment('points', $pointsToEarn); 
         }
-        $user->completedBooks()->attach($bookId);
+        $user->completedBooks()->attach($bookId,
+        ['points'=>$pointsToEarn]);
 
         return response()->json([
             'correct_answers' => $correctCount,
