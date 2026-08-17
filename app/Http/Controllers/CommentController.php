@@ -12,7 +12,7 @@ class CommentController extends Controller
     public function addComment (Request $request, $bookId) {
         $book=Book::findOrFail($bookId);
         $validated = $request-> validate([
-            'body' => 'required|string|min:10|max:5000'
+            'body' => 'required|string|min:1|max:5000'
         ]);
 
         $comment = Comment::create([

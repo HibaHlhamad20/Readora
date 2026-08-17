@@ -35,6 +35,11 @@ Route::middleware(['auth:sanctum'])->group(function(){
     //عرض جميع الكتب في المفضلة
     Route::get('/books/favourite',[BookController::class,'showFavourites']);
 
+    //إضافة تقييم لكتاب
+    Route::post('/ratings/{id}',[BookController::class,'addRating']);
+    //تعديل تقييم كتاب
+    Route::put('/ratings/{id}',[BookController::class,'updateRating']);
+
 //1
     Route::get('/user', function (Request $request) {
     return $request->user()->load('categories');
@@ -65,7 +70,7 @@ Route::get('/user/points_history',[UserController::class,'getPointsHistory']);
 //my books
 Route::get('/user/my-books', [UserController::class, 'getMyBooks']);
 //get purchase history
-  Route::get('/user/purchases-history', [UserController::class, 'getPurchasesHistory']);
+Route::get('/user/purchases-history', [UserController::class, 'getPurchasesHistory']);
 
 
 
@@ -140,6 +145,8 @@ Route::get('/books/new',[BookController::class,'showNewBooks']);
 Route::get('/books/details/{id}',[BookController::class,'showBookDetails']);
 //عرض الكتب مع فلترة للبحث
 Route::get('/books/search',[BookController::class,'searchBooks']);
+//بحث عن المؤلف حسب الاسم
+Route::get('/authors/search',[BookController::class,'searchAuthors']);
 
 //  Route::middleware('user')->group(function()
 //  {
