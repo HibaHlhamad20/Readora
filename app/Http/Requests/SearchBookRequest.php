@@ -24,6 +24,7 @@ class SearchBookRequest extends FormRequest
     {
         return [
         'book_name' => 'nullable|string|max:255',
+        'author_name' => 'nullable|string|max:255', // ضفت هاد 
         'language' => 'nullable|in:arabic,english,chinese,spanish,hindi,portuguese,russian,japanese,punjabi,german,javanese,korean,french,turkish,urdu,italian',
         'number_of_pages_from' => 'nullable|integer',
         'number_of_pages_to' => 'nullable|integer',

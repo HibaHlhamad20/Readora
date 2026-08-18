@@ -192,11 +192,19 @@ public function showNewBooks()
         if ($request->filled('rental_price_to'))
             $book->where('rental_price', '<=', $request->rental_price_to);
 
-        if ($request->filled('author_id')) {
-            $book->whereHas('authors',function ($query) use ($request) {
-                $query->where('author_id',$request->author_id);
-            });         
-        }
+      
+        
+    if ($request->filled('author_id')) {
+        $book->whereHas('authors', function ($query) use ($request) {
+            $query->where('authors.id', $request->author_id);
+        });        
+    } 
+    //   الفلترة باسم المؤلف إذا أُرسل الاسم كامل 
+    elseif ($request->filled('author_name')) {
+        $book->whereHas('authors', function ($query) use ($request) {
+            $query->where('author_name', 'LIKE', '%'.$request->author_name.'%');
+        });
+    }
         if ($request->filled('category_id')) {
             $book->whereHas('categories',function ($query) use ($request) {
                 $query->where('category_id',$request->category_id);

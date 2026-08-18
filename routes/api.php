@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->group(function(){
-
+Route::get('/books/recommended', [BookController::class, 'showBooksByUserInterests']);
     //التعليقات
     //إضافة تعليق
     Route::post('comments/{bookId}',[CommentController::class,'addComment']);
