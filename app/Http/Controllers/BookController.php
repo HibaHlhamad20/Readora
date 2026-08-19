@@ -161,7 +161,7 @@ public function showNewBooks()
     public function showBookDetails ($id)
     {
         $book=Book::findOrFail($id);
-        return response()->json($book, 200);
+        return response()->json($book->load(['authors','categories']), 200);
     }
 
     public function searchBooks (SearchBookRequest $request)

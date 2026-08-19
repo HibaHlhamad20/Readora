@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Book extends Model
 {
     protected $guarded = [];
+
+    protected $casts = ['book_images' => 'array'];
     
     public function authors ()
     {
