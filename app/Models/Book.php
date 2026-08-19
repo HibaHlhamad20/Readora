@@ -25,7 +25,7 @@ class Book extends Model
     public function purchases(){
         return $this->hasMany(Purchase::class);
     }
-
+    
     public function borrowings(){
         return $this->hasMany(Borrowing::class);
     }
@@ -38,5 +38,9 @@ class Book extends Model
         return $this->belongsToMany(User::class,'book_user')->withPivot('points','created_at');
     }
 
+
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
 
 }

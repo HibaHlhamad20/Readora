@@ -11,6 +11,7 @@ use App\Services\ImageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
@@ -191,12 +192,19 @@ public function showNewBooks()
         if ($request->filled('rental_price_to'))
             $book->where('rental_price', '<=', $request->rental_price_to);
 
-        if ($request->filled('author_id')) {
-            $book->whereHas('authors',function ($query) use ($request) {
-                $query->where('author_id',$request->author_id);
-            });         
-        }
-
+      
+        
+    if ($request->filled('author_id')) {
+        $book->whereHas('authors', function ($query) use ($request) {
+            $query->where('authors.id', $request->author_id);
+        });        
+    } 
+    //   الفلترة باسم المؤلف إذا أُرسل الاسم كامل 
+    elseif ($request->filled('author_name')) {
+        $book->whereHas('authors', function ($query) use ($request) {
+            $query->where('author_name', 'LIKE', '%'.$request->author_name.'%');
+        });
+    }
         if ($request->filled('category_id')) {
             $book->whereHas('categories',function ($query) use ($request) {
                 $query->where('category_id',$request->category_id);
@@ -206,6 +214,16 @@ public function showNewBooks()
         $books = $book->get();
 
         return response()->json($books, 200);
+    }
+
+    public function searchAuthors (Request $request)
+    {
+        $validate = $request->validate([
+            'author_name' => 'required|string|min:1',
+        ]);
+        $authors = Author::where('author_name', 'LIKE', '%'.$validate['author_name'].'%')->select('id','author_name')->get();
+
+        return response()->json($authors, 200);
     }
 
     public function addToFavourite ($id)
@@ -218,13 +236,73 @@ public function showNewBooks()
     public function removeFromFavourite ($id)
     {
         Auth::user()->favouriteBooks()->detach($id);
-        return response()->json(['message'=>'Book removed from favourite successfully','data'=>$book], 200);
+        return response()->json(['message'=>'Book removed from favourite successfully','data'=>null], 200);
     }
 
     public function showFavourites ()
     {
         $books=Auth::user()->favouriteBooks()->get();
         return response()->json($books, 200);
+    }
+
+    public function addRating(Request $request, $id)
+    {
+        $book=Book::findOrFail($id);
+        $validate=$request->validate([
+            'rating' => 'required|min:1|max:5|integer'
+        ]);
+
+        $old_rating = DB::table('ratings')->where('user_id',Auth::id())->where('book_id',$book->id) 
+        ->first();
+
+        if ($old_rating) {
+            return response()->json(['message'=> 'User has rated already.'],409);
+        }
+
+        DB::table('ratings')->insert([
+            'user_id'=>Auth::id(),
+            'book_id'=>$book->id,
+            'rating'=>$validate['rating'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $book->rating_count = $book->rating_count + 1;
+        $book->rating_sum = $book->rating_sum + $validate['rating'];
+        $book->rating = $book->rating_sum / $book->rating_count;
+        $book->save();
+
+        return response()->json(['message'=>'Rating added successfully','data'=>[
+            'book_id'=>$book->id, 'rating'=>$validate['rating']
+        ]], 201);
+    }
+
+    public function updateRating(Request $request, $id)
+    {
+        $book=Book::findOrFail($id);
+        $validate=$request->validate([
+            'rating' => 'required|min:1|max:5|integer'
+        ]);
+
+        $old_rating = DB::table('ratings')->where('user_id',Auth::id())->where('book_id',$book->id) 
+        ->first();
+
+        if (! $old_rating) {
+            return response()->json(['message'=> 'User has not rated yet.'],404);
+        }
+
+        DB::table('ratings')->where('id',$old_rating->id)->update([
+            'rating'=>$validate['rating'],
+            'updated_at' => now(),
+        ]);
+
+        $book->rating_sum = $book->rating_sum - $old_rating->rating + $validate['rating'];
+        $book->rating = $book->rating_sum / $book->rating_count;
+        $book->save();
+
+        return response()->json(['message'=>'Rating updated successfully','data'=>[
+            'book_id'=>$book->id, 'rating'=>$validate['rating']
+        ]], 200);
     }
     
 

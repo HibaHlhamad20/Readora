@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('book_name');
             $table->text('description');
             $table->enum('language',['arabic','english','chinese','spanish','hindi',
-            'portuguese','russian','japanese','punjabi','german','javanese','korean',
+            'portuguese','russian','japanese','punjabi','german','korean',
             'french','turkish','urdu','italian']);
             $table->integer('number_of_pages');
             $table->decimal('selling_price',10,2);

@@ -92,4 +92,8 @@ class User extends Authenticatable
     public function chargingRequests(){
         return $this->hasMany(ChargingRequest::class);
     }
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
+
 }
