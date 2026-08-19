@@ -45,68 +45,141 @@ class QuizController extends Controller
         ], 200);
     }
 
+// public function submitQuiz(Request $request)
+// {
+    
+//     $firstAnswer = $request->input('answers.0'); 
+    
+//     if (!$firstAnswer) {
+//         return response()->json(['message' => 'لم يتم إرسال أي إجابات'], 400);
+//     }
+
+    
+//     $question =Question::find($firstAnswer['question_id']);
+    
+//     if (!$question) {
+//         return response()->json(['message' => 'السؤال غير موجود'], 404);
+//     }
+
+    
+//     $bookId = $question->book_id; 
+   
+//      $user = Auth::user();
+        
+//      $alreadySolved=$user->completedBooks()->where('book_id',$bookId)->exists();
+//      if($alreadySolved){
+//         return response()->json([
+//             'message'=>'لقد قمت باجتياز هذا الاختبار سابقا'
+//         ],403);
+//      }
+        
+//         $answers = $request->input('answers'); 
+        
+//         if (empty($answers)) {
+//             return response()->json(['message' => 'لم يتم إرسال أي إجابات لتصحيحها.'], 400);
+//         }
+
+//         $correctCount = 0;
+        
+
+//         foreach ($answers as $answer) {
+//             $question = Question::find($answer['question_id']);
+            
+//             if ($question && $question->correct_answer === $answer['user_answer']) {
+//                 $correctCount++; 
+//             }
+//         }
+        
+        
+//         $pointsToEarn = $correctCount * 1; 
+        
+//         if ($pointsToEarn > 0) {
+//             $user->increment('points', $pointsToEarn); 
+//         }
+//         $user->completedBooks()->attach($bookId,
+//         ['points'=>$pointsToEarn]);
+
+//         return response()->json([
+//             'correct_answers' => $correctCount,
+//             'points_earned' => $pointsToEarn,
+//             'current_total_points' => $user->points, 
+//             'message' => "لقد أجبت على $correctCount أسئلة بشكل صحيح وحصلت على $pointsToEarn نقاط بونص!"
+//         ], 200);
+
+// }  
+
 public function submitQuiz(Request $request)
 {
+    $answers = $request->input('answers'); 
     
-    $firstAnswer = $request->input('answers.0'); 
-    
-    if (!$firstAnswer) {
+    if (empty($answers)) {
         return response()->json(['message' => 'لم يتم إرسال أي إجابات'], 400);
     }
 
-    
-    $question =Question::find($firstAnswer['question_id']);
+    $firstAnswer = $answers[0]; 
+    $question = Question::find($firstAnswer['question_id']);
     
     if (!$question) {
         return response()->json(['message' => 'السؤال غير موجود'], 404);
     }
 
-    
     $bookId = $question->book_id; 
-   
-     $user = Auth::user();
+    $user = Auth::user();
         
-     $alreadySolved=$user->completedBooks()->where('book_id',$bookId)->exists();
-     if($alreadySolved){
+    
+    $alreadySolved = $user->completedBooks()->where('book_id', $bookId)->exists();
+    if ($alreadySolved) {
         return response()->json([
-            'message'=>'لقد قمت باجتياز هذا الاختبار سابقا'
-        ],403);
-     }
-        
-        $answers = $request->input('answers'); 
-        
-        if (empty($answers)) {
-            return response()->json(['message' => 'لم يتم إرسال أي إجابات لتصحيحها.'], 400);
-        }
+            'message' => 'لقد قمت باجتياز هذا الاختبار سابقاً'
+        ], 403);
+    }
 
-        $correctCount = 0;
-        
+    $correctCount = 0;
+    $totalQuestions = count($answers);
 
-        foreach ($answers as $answer) {
-            $question = Question::find($answer['question_id']);
-            
-            if ($question && $question->correct_answer === $answer['user_answer']) {
-                $correctCount++; 
-            }
+    
+    foreach ($answers as $answer) {
+        $q = Question::find($answer['question_id']);
+        
+        if ($q && $q->correct_answer === $answer['user_answer']) {
+            $correctCount++; 
         }
-        
-        
-        $pointsToEarn = $correctCount * 1; 
-        
-        if ($pointsToEarn > 0) {
-            $user->increment('points', $pointsToEarn); 
-        }
-        $user->completedBooks()->attach($bookId,
-        ['points'=>$pointsToEarn]);
+    }
+    
+    
+    $pointsToEarn = 0;
+    $passed = false;
 
+    if ($correctCount === $totalQuestions && $totalQuestions > 0) {
+        $pointsToEarn = 3; // إعطاء 3 نقاط فقط في حال الإجابة الكاملة
+        $passed = true;
+        $user->increment('points', $pointsToEarn); 
+    }
+
+
+    $user->completedBooks()->attach($bookId, [
+        'points' => $pointsToEarn
+    ]);
+
+    
+    if ($passed) {
         return response()->json([
+            'passed' => true,
             'correct_answers' => $correctCount,
             'points_earned' => $pointsToEarn,
-            'current_total_points' => $user->points, 
-            'message' => "لقد أجبت على $correctCount أسئلة بشكل صحيح وحصلت على $pointsToEarn نقاط بونص!"
+            'current_total_points' => $user->fresh()->points, 
+            'message' => "تهانينا! لقد أجبت على جميع الأسئلة بشكل صحيح وحصلت على $pointsToEarn نقاط!"
         ], 200);
+    }
 
-}  
+    return response()->json([
+        'passed' => false,
+        'correct_answers' => $correctCount,
+        'points_earned' => 0,
+        'current_total_points' => $user->points, 
+        'message' => "للأسف، لم تتجاوز الاختبار. يجب الإجابة على جميع الأسئلة بشكل صحيح للحصول على النقاط."
+    ], 200);
+}
 
   
 }

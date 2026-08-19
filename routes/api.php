@@ -51,7 +51,11 @@ Route::get('/user/points_history',[UserController::class,'getPointsHistory']);
 //my books
 Route::get('/user/my-books', [UserController::class, 'getMyBooks']);
 //get purchase history
-  Route::get('/user/purchases-history', [UserController::class, 'getPurchasesHistory']);
+ Route::get('/user/purchases-history', [UserController::class, 'getPurchasesHistory']);
+ 
+ 
+ //wallet transaction
+ Route::get('/user/wallet_transaction',[UserController::class,'getTransactions']);
 
 
 
@@ -130,3 +134,4 @@ Route::get('/books/favourite',[BookController::class,'showFavourites']);
 //1|h1nlWxHbF2slIOzkfMq0pjkl7Vy6yRqS4LGMCbJe93bb67bb//user
 //2|3ZPxmUWwSA6FuJvbPi80SF2YB3iLyS8Ym6fS5HQIc29a55a3
 //3|L8m7F7RPRvb1SOf32p7aYNseGAQTwHn1ctxNqVtd563e5a25//user
+//4|mqBCzNhBbLnHGkA5z7ydiCfY3uXlKPES1kKRnymHa241483c

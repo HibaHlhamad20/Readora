@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -86,5 +87,9 @@ class User extends Authenticatable
 
     public function borrowings(){
         return $this->hasMany(Borrowing::class);
+    }
+
+    public function chargingRequests(){
+        return $this->hasMany(ChargingRequest::class);
     }
 }

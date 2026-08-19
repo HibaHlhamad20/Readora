@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
+use Illuminate\Support\Facades\Log;
 
 class FirebaseService
 {
@@ -20,8 +21,8 @@ class FirebaseService
             $messaging->send($message);
             return true;
         } catch (\Exception $e) {
-
-            return false;
+         \Log::error("FCM Error: " . $e->getMessage());
+          return false;
         }
     }
 }

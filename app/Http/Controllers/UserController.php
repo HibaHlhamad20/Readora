@@ -129,4 +129,49 @@ public function getMyBooks(Request $request)
         'books'       => $allBooks
     ], 200);
 }
+
+
+
+public function getTransactions(Request $request)
+{
+    $user = $request->user();
+
+    
+    $purchases = $user->purchases->map(fn($item) => [
+        'type' => 'Purchase',
+        'amount' => -$item->price, 
+        'date' => $item->created_at
+    ]);
+
+    $borrowings = $user->borrowings->map(fn($item) => [
+        'type' => 'Borrow',
+        'amount' => -$item->price, 
+        'date' => $item->created_at
+    ]);
+
+    $charges = $user->chargingRequests->where('status', 'approved')->map(fn($item) => [
+        'type' => 'Recharge',
+        'amount' => $item->amount, 
+        'date' => $item->created_at
+    ]);
+
+    
+    $allTransactions = collect()->merge($purchases)->merge($borrowings)->merge($charges)
+                        ->sortByDesc('date') 
+                        ->values();
+
+    
+    return response()->json([
+        'wallet_balance' => $user->wallet, // تأكدي أن اسم العمود بجدول users هو wallet
+        'transactions' => $allTransactions
+    ]);
+}
+
+
+
+
+
+
+
+
 }
