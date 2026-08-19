@@ -43,4 +43,8 @@ class Book extends Model
         return $this->hasMany(Comment::class);
     }
 
+    public function events(){
+        return $this->belongsToMany(Event::class,'event_book','book_id','event_id');
+    }  
+
 }
