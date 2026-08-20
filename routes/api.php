@@ -46,6 +46,22 @@ Route::get('/books/recommended', [BookController::class, 'showBooksByUserInteres
     Route::post('/participations/{event_id}',[ParticipationController::class,'addParticipation']);
     //إلغاء المشاركة بفعالية
     Route::delete('/participations/{participation_id}',[ParticipationController::class,'cancelParticipation']);
+    
+    //عرض الفعاليات القادمة
+    Route::get('/events/upcoming',[EventController::class,'showUpcomingEvents']);
+    //عرض الفعاليات الحالية
+    Route::get('/events/ongoing',[EventController::class,'showOngoingEvents']);
+    //عرض الفعاليات المنتهية
+    Route::get('/events/completed',[EventController::class,'showCompletedEvents']);
+    //عرض الفعاليات الملغية
+    Route::get('/events/cancelled',[EventController::class,'showCancelledEvents']);
+    //عرض الفعاليات اللي شارك فيها المستخدم
+    Route::get('/events/participations',[ParticipationController::class,'showAllParticipations']);
+    //عرض الفعاليات اللي ربح فيها المستخدم
+    Route::get('/events/wins',[ParticipationController::class,'showWinParticipations']);
+    //عرض الفعاليات اللي خسر فيها المستخدم
+    Route::get('/events/losses',[ParticipationController::class,'showLoseParticipations']);
+
 
 //1
     Route::get('/user', function (Request $request) {

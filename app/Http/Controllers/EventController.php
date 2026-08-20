@@ -43,6 +43,30 @@ class EventController extends Controller
         return response()->json($events,200);
     }
 
+    public function showUpcomingEvents () {
+        $events = Event::where('status','upcoming')->with(['books'])->orderBy('created_at','desc')->get();
+
+        return response()->json($events,200);
+    }
+
+    public function showOngoingEvents () {
+        $events = Event::where('status','ongoing')->with(['books'])->orderBy('created_at','desc')->get();
+
+        return response()->json($events,200);
+    }
+
+    public function showCompletedEvents () {
+        $events = Event::where('status','completed')->with(['books'])->orderBy('created_at','desc')->get();
+
+        return response()->json($events,200);
+    }
+
+    public function showCancelledEvents () {
+        $events = Event::where('status','cancelled')->with(['books'])->orderBy('created_at','desc')->get();
+
+        return response()->json($events,200);
+    }
+
     public function showEvent ($id) {
         $event = Event::findOrFail($id);
 

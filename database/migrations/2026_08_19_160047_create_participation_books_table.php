@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('participation_id')->constrained('participations')->cascadeOnDelete();
             $table->foreignId('book_id')->constrained('books')->cascadeOnDelete();
+            $table->enum('status',['finished','not_finished'])->default('not_finished');
             $table->dateTime('finished_at')->nullable();
             $table->timestamps();
             $table->unique(['participation_id','book_id']);

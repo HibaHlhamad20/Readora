@@ -37,4 +37,25 @@ class ParticipationController extends Controller
 
         return response()->json(['message'=>'Participation has been cancelled successfully','data'=>$participation],200);
     }
+
+    public function showAllParticipations () {
+        $event_ids = Participation::where('user_id',Auth::id())->pluck('event_id');
+        $events = Event::whereIn('id',$event_ids)->with(['books'])->orderBy('created_at','desc')->get();
+
+        return response()->json($events,200);
+    }
+
+    public function showWinParticipations () {
+        $event_ids = Participation::where('user_id',Auth::id())->where('status','finished')->pluck('event_id');
+        $events = Event::whereIn('id',$event_ids)->with(['books'])->orderBy('created_at','desc')->get();
+
+        return response()->json($events,200);
+    }
+
+    public function showLoseParticipations () {
+        $event_ids = Participation::where('user_id',Auth::id())->where('status','joined')->pluck('event_id');
+        $events = Event::whereIn('id',$event_ids)->with(['books'])->orderBy('created_at','desc')->where('status','finished')->get();
+
+        return response()->json($events,200);
+    }
 }

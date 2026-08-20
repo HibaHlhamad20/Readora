@@ -7,7 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Question;
 use App\Models\Book;
+use App\Models\Event;
+use App\Models\Participation;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class QuizController extends Controller
 {
@@ -163,6 +166,27 @@ public function submitQuiz(Request $request)
 
     
     if ($passed) {
+        $events_id = DB::table('event_book')->where('book_id',$bookId)->pluck('event_id');
+        $event_ids = Event::whereIn('id',$events_id)->where('status','ongoing')->pluck('id');
+        $participation_ids = Participation::where('user_id',Auth::id())->where('status','joined')->whereIn('event_id',$event_ids)->pluck('id');
+        if ($participation_ids->isNotEmpty()) {
+            DB::table('participation_books')->whereIn('participation_id',$participation_ids)->where('book_id',$bookId)->update([
+                'status'=>'finished',
+                'finished_at'=>now()
+            ]);
+            $participation_ids = DB::table('participation_books')->whereIn('participation_id',$participation_ids)->where('book_id',$bookId)->pluck('participation_id');
+            foreach ($participation_ids as $participation_id)
+                {
+            $not_finished_books = DB::table('participation_books')->where('participation_id',$participation_id)->where('status','not_finished')->exists();
+            if (!$not_finished_books)
+                {
+                    $participation = Participation::where('id',$participation_id)->first();
+                    $participation->status = 'finished';
+                    $participation->finished_at = now();
+                    $participation->save();
+                }
+                }
+        }
         return response()->json([
             'passed' => true,
             'correct_answers' => $correctCount,
