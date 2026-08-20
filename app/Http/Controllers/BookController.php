@@ -54,7 +54,7 @@ class BookController extends Controller
             }
         if ($request->hasFile('book_images'))
             {
-                $images = json_decode($book->book_images, true) ?? [];
+                $images = $book->book_images ?? [];
                 foreach ($images as $img)
                     {
                         ImageService::delete($img);
@@ -88,7 +88,7 @@ class BookController extends Controller
         $book = Book::findOrFail($id);
 
         ImageService::delete($book->cover_image);
-        $images = json_decode($book->book_images, true) ?? [];
+        $images = $book->book_images ?? [];
         foreach ($images as $img)
             {
                 ImageService::delete($img);
