@@ -24,7 +24,7 @@ class QuizController extends Controller
     
     if ($alreadySolved) {
         return response()->json([
-            'message' => 'عذراً، لقد قمت باجتياز اختبار هذا الكتاب مسبقاً ولا يمكنك رؤية الأسئلة مجدداً.'
+            'message' => 'عذراً، لقد قمت بأداء اختبار هذا الكتاب من قبل ولا يمكنك إعادته.'
         ], 403); 
     }
         
@@ -133,12 +133,12 @@ public function submitQuiz(Request $request)
     $alreadySolved = $user->completedBooks()->where('book_id', $bookId)->exists();
     if ($alreadySolved) {
         return response()->json([
-            'message' => 'لقد قمت باجتياز هذا الاختبار سابقاً'
+            'message' => 'لقد قمت بأداء اختبار هذا الكتاب من قبل ولا يمكنك إعادته'
         ], 403);
     }
 
+    $totalQuestions = Question::where('book_id', $bookId)->count();
     $correctCount = 0;
-    $totalQuestions = count($answers);
 
     
     foreach ($answers as $answer) {
@@ -153,7 +153,7 @@ public function submitQuiz(Request $request)
     $pointsToEarn = 0;
     $passed = false;
 
-    if ($correctCount === $totalQuestions && $totalQuestions > 0) {
+    if ($correctCount === $totalQuestions && $totalQuestions > 0 && count($answers) === $totalQuestions) {
         $pointsToEarn = 3; // إعطاء 3 نقاط فقط في حال الإجابة الكاملة
         $passed = true;
         $user->increment('points', $pointsToEarn); 
