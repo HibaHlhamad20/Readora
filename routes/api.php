@@ -62,6 +62,18 @@ Route::get('/books/recommended', [BookController::class, 'showBooksByUserInteres
     //عرض الفعاليات اللي خسر فيها المستخدم
     Route::get('/events/losses',[ParticipationController::class,'showLoseParticipations']);
 
+    //عرض فعالية قادمة
+    Route::get('/events/upcoming/{id}',[EventController::class,'showUpcomingEvent']);
+    //عرض فعالية حالية
+    Route::get('/events/ongoing/{id}',[EventController::class,'showOngoingEvent']);
+    //عرض فعالية منتهية
+    Route::get('/events/completed/{id}',[EventController::class,'showCompletedEvent']);
+    //عرض فعالية ملغية
+    Route::get('/events/cancelled/{id}',[EventController::class,'showCancelledEvent']);
+    //عرض فعالية مشترك بها + فاز أو خسر بها
+    Route::get('/events/cancelled/{id}',[EventController::class,'showParticipatedEvent']);
+
+
 
 //1
     Route::get('/user', function (Request $request) {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\Participation;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ParticipationController extends Controller
 {
@@ -20,6 +21,13 @@ class ParticipationController extends Controller
             'event_id'=>$event->id,
             'status'=>'joined',
             'joined_at'=>now()
+        ]);
+        $books = $event->books;
+
+        foreach ($books as $book)
+        DB::table('participation_books')->insert([
+            'participation_id'=>$participation->id,
+            'book_id'=>$book->id,
         ]);
 
         return response()->json(['message'=>'Participation has been created successfully','data'=>$participation],201);
