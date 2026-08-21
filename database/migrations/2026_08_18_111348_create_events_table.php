@@ -16,8 +16,8 @@ return new class extends Migration
             $table->timestamps();
             $table->string('event_name');
             $table->enum('status',['completed','cancelled','upcoming','ongoing'])->default('upcoming');
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->dateTime('start_date');
+            $table->dateTime('end_date');
             $table->integer('points');
         });
     }

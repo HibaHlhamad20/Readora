@@ -112,8 +112,12 @@ class EventController extends Controller
                 where('participation_id',$participation->id)->
                 select('books.*','participation_books.status','participation_books.finished_at')->
                 get();
+                $finished_at = $participation->finished_at;
+                $joined_at = $participation->joined_at;
                 return response()->json(([
                 'event'=>$event,
+                'finished_at'=>$finished_at,
+                'joined_at'=>$joined_at,
                 'books'=>$participationBooks,
                 'winners'=>$winners
             ]),200);
@@ -147,8 +151,12 @@ class EventController extends Controller
                 where('participation_id',$participation->id)->
                 select('books.*','participation_books.status','participation_books.finished_at')->
                 get();
+                $finished_at = $participation->finished_at;
+                $joined_at = $participation->joined_at;
                 return response()->json(([
                 'event'=>$event,
+                'finished_at'=>$finished_at,
+                'joined_at'=>$joined_at,
                 'books'=>$participationBooks,
                 'winners'=>$winners
             ]),200);

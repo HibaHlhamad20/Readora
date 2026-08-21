@@ -5,8 +5,9 @@ namespace App\Console\Commands;
 use App\Models\Event;
 use App\Models\Participation;
 use App\Models\User;
-use Illuminate\Console\Command;
 use App\Services\FirebaseService;
+use Illuminate\Console\Command;
+
 
 class UpdateEventsStatuses extends Command
 {

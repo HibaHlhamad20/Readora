@@ -72,9 +72,10 @@ class ParticipationController extends Controller
         }
     
 
-    public function showWinQuizes(){
+
+    public function showWinQuizes(Request $request){
         
-    $user = auth()->user();
+    $user = $request->user();
 
     $quizzes = $user->completedBooks()
         ->orderBy('book_user.created_at', 'desc')
@@ -93,10 +94,8 @@ class ParticipationController extends Controller
     return $quizzes;
     }
 
-
-
     public function getMyWinsOverview()
-{
+    {
     
     $events = $this->showWinParticipations();
 
@@ -113,7 +112,7 @@ class ParticipationController extends Controller
         'events'     => $events,
         'quizzes'    => $quizzes,
     ], 200);
-}
+    }
 
 
     public function showLoseParticipations () {

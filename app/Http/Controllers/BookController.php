@@ -21,7 +21,7 @@ class BookController extends Controller
     {
         $validatedData = $request->validated();
         $validatedData['cover_image'] = ImageService::upload($request->file('cover_image'),'books/covers');
-        $validatedData['book_images'] = json_encode(ImageService::uploadMultiple($request->file('book_images'),'books/pages'));
+        $validatedData['book_images'] = ImageService::uploadMultiple($request->file('book_images'),'books/pages');
         $validatedData['book_file'] = $request->file('book_file')->store('book_files','public');
 
         $book = Book::create(Arr::except($validatedData, ['author_ids','category_ids']));
@@ -59,7 +59,7 @@ class BookController extends Controller
                     {
                         ImageService::delete($img);
                     }
-                $validatedData['book_images'] = json_encode(ImageService::uploadMultiple($request->file('book_images'),'books/pages'));
+                $validatedData['book_images'] = ImageService::uploadMultiple($request->file('book_images'),'books/pages');
             }
         if ($request->hasFile('book_file'))
             {
