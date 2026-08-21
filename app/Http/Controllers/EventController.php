@@ -172,11 +172,18 @@ class EventController extends Controller
             }
     }
 
-    // public function showEvent ($id) {
-    //     $event = Event::findOrFail($id);
-    //     return response()->json($event->load(['books','participations']),200);
-    // }
-
-
+    public function showEvent ($id) {
+        $event = Event::findOrFail($id);
+        $participations_count = Participation::where('event_id',$id)->count();
+        $participations_users = Participation::join('users','users.id','=','participations.user_id')->where('participations.event_id',$id)
+        ->select('users.id','users.name','participations.status','participations.joined_at','participations.finished_at')->get();
+        $books_count = DB::table('event_book')->where('event_id',$id)->count();
+        return response()->json(([
+           'event'=>$event->load(['books']),
+            'participations_count'=>$participations_count,
+            'participations_users'=>$participations_users,
+            'books_count'=>$books_count
+        ]),200);
+    }
  
 }
