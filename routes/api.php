@@ -59,6 +59,10 @@ Route::get('/books/recommended', [BookController::class, 'showBooksByUserInteres
     Route::get('/events/participations',[ParticipationController::class,'showAllParticipations']);
     //عرض الفعاليات اللي ربح فيها المستخدم
     Route::get('/events/wins',[ParticipationController::class,'showWinParticipations']);
+    //عرض الكويزات التي فاز بها
+    Route::get('/quizzes/win',[ParticipationController::class,'showWinQuizes']);
+    //عرض الفعاليات والكويزات كلهن الفاز فيهن المستخدم تبع واجهة my wins
+    Route::get('/my_wins',[ParticipationController::class,'getMyWinsOverview']);
     //عرض الفعاليات اللي خسر فيها المستخدم
     Route::get('/events/losses',[ParticipationController::class,'showLoseParticipations']);
 

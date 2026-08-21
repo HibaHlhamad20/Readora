@@ -6,6 +6,9 @@ use App\Models\Event;
 use App\Models\Participation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use \App\Models\User;
+use Illuminate\Http\Request;
+
 
 class ParticipationController extends Controller
 {
@@ -54,11 +57,64 @@ class ParticipationController extends Controller
     }
 
     public function showWinParticipations () {
-        $event_ids = Participation::where('user_id',Auth::id())->where('status','finished')->pluck('event_id');
-        $events = Event::whereIn('id',$event_ids)->with(['books'])->orderBy('created_at','desc')->get();
+        // $event_ids = Participation::where('user_id',Auth::id())->where('status','finished')->pluck('event_id');
+        // $events = Event::whereIn('id',$event_ids)->with(['books'])->orderBy('created_at','desc')->get();
 
-        return response()->json($events,200);
+        // return response()->json($events,200);
+
+        
+        $events = Participation::join('events','events.id','=','participations.event_id')->where('participations.user_id',Auth::id())->where('participations.status','finished')
+        ->select([
+            'events.id','events.event_name','events.points','events.start_date','events.end_date','participations.joined_at','participations.finished_at'
+        ])->get();
+
+        return $events; 
+        }
+    
+
+    public function showWinQuizes(){
+        
+    $user = auth()->user();
+
+    $quizzes = $user->completedBooks()
+        ->orderBy('book_user.created_at', 'desc')
+        ->get()
+        ->map(function ($book) {
+            return [
+                'type'   => 'Quiz',
+                'title'  => $book->book_name,
+                'points' => $book->pivot->points ?? 0 ,
+                'date'   => $book->pivot->created_at 
+                            ? \Carbon\Carbon::parse($book->pivot->created_at)->format('d M Y') 
+                            : '',
+            ];
+        });
+
+    return $quizzes;
     }
+
+
+
+    public function getMyWinsOverview()
+{
+    
+    $events = $this->showWinParticipations();
+
+    
+    $quizzes = $this->showWinQuizes();
+
+    
+    $totalWins = count($events) + count($quizzes);
+
+    return response()->json([
+        'status'     => true,
+        'total_wins' => $totalWins,
+        'wins'       => $events->concat($quizzes), 
+        'events'     => $events,
+        'quizzes'    => $quizzes,
+    ], 200);
+}
+
 
     public function showLoseParticipations () {
         $event_ids = Participation::where('user_id',Auth::id())->where('status','joined')->pluck('event_id');

@@ -49,76 +49,19 @@ class QuizController extends Controller
         ], 200);
     }
 
-// public function submitQuiz(Request $request)
-// {
-    
-//     $firstAnswer = $request->input('answers.0'); 
-    
-//     if (!$firstAnswer) {
-//         return response()->json(['message' => 'لم يتم إرسال أي إجابات'], 400);
-//     }
 
-    
-//     $question =Question::find($firstAnswer['question_id']);
-    
-//     if (!$question) {
-//         return response()->json(['message' => 'السؤال غير موجود'], 404);
-//     }
 
-    
-//     $bookId = $question->book_id; 
-   
-//      $user = Auth::user();
-        
-//      $alreadySolved=$user->completedBooks()->where('book_id',$bookId)->exists();
-//      if($alreadySolved){
-//         return response()->json([
-//             'message'=>'لقد قمت باجتياز هذا الاختبار سابقا'
-//         ],403);
-//      }
-        
-//         $answers = $request->input('answers'); 
-        
-//         if (empty($answers)) {
-//             return response()->json(['message' => 'لم يتم إرسال أي إجابات لتصحيحها.'], 400);
-//         }
 
-//         $correctCount = 0;
-        
-
-//         foreach ($answers as $answer) {
-//             $question = Question::find($answer['question_id']);
-            
-//             if ($question && $question->correct_answer === $answer['user_answer']) {
-//                 $correctCount++; 
-//             }
-//         }
-        
-        
-//         $pointsToEarn = $correctCount * 1; 
-        
-//         if ($pointsToEarn > 0) {
-//             $user->increment('points', $pointsToEarn); 
-//         }
-//         $user->completedBooks()->attach($bookId,
-//         ['points'=>$pointsToEarn]);
-
-//         return response()->json([
-//             'correct_answers' => $correctCount,
-//             'points_earned' => $pointsToEarn,
-//             'current_total_points' => $user->points, 
-//             'message' => "لقد أجبت على $correctCount أسئلة بشكل صحيح وحصلت على $pointsToEarn نقاط بونص!"
-//         ], 200);
-
-// }  
 
 public function submitQuiz(Request $request)
-{
+ {
+    
     $answers = $request->input('answers'); 
     
     if (empty($answers)) {
         return response()->json(['message' => 'لم يتم إرسال أي إجابات'], 400);
     }
+    $user=auth()->user();
 
     $firstAnswer = $answers[0]; 
     $question = Question::find($firstAnswer['question_id']);
@@ -128,7 +71,7 @@ public function submitQuiz(Request $request)
     }
 
     $bookId = $question->book_id; 
-    $user = Auth::user();
+      $user = auth()->user();
         
     
     $alreadySolved = $user->completedBooks()->where('book_id', $bookId)->exists();
@@ -159,21 +102,15 @@ public function submitQuiz(Request $request)
         $passed = true;
         $user->increment('points', $pointsToEarn); 
     }
-
-
+    
+    
     $user->completedBooks()->attach($bookId, [
         'points' => $pointsToEarn
     ]);
 
     
     if ($passed) {
-           if (!empty($user->fcm_token)) {
-            FirebaseService::sentNotification(
-                $user->fcm_token,
-                'تهانينا! 🎉',
-                "لقد أجبت على جميع الأسئلة بشكل صحيح وحصلت على {$pointsToEarn} نقاط جديدة!"
-            );
-        }
+         
 
         $events_id = DB::table('event_book')->where('book_id',$bookId)->pluck('event_id');
         $event_ids = Event::whereIn('id',$events_id)->where('status','ongoing')->pluck('id');
@@ -196,6 +133,16 @@ public function submitQuiz(Request $request)
                 }
                 }
         }
+          if (!empty($user->fcm_token)) {
+            FirebaseService::sentNotification(
+                $user->fcm_token,
+                'تهانينا! 🎉',
+                "لقد أجبت على جميع الأسئلة بشكل صحيح وحصلت على {$pointsToEarn} نقاط جديدة!"
+            );
+        }
+
+
+
         return response()->json([
             'passed' => true,
             'correct_answers' => $correctCount,
@@ -212,7 +159,6 @@ public function submitQuiz(Request $request)
         'current_total_points' => $user->points, 
         'message' => "للأسف، لم تتجاوز الاختبار. يجب الإجابة على جميع الأسئلة بشكل صحيح للحصول على النقاط."
     ], 200);
-}
+ }
 
-  
 }
