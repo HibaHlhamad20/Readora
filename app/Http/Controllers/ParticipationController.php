@@ -62,7 +62,7 @@ class ParticipationController extends Controller
 
     public function showLoseParticipations () {
         $event_ids = Participation::where('user_id',Auth::id())->where('status','joined')->pluck('event_id');
-        $events = Event::whereIn('id',$event_ids)->with(['books'])->orderBy('created_at','desc')->where('status','finished')->get();
+        $events = Event::whereIn('id',$event_ids)->with(['books'])->orderBy('created_at','desc')->where('status','completed')->get();
 
         return response()->json($events,200);
     }
