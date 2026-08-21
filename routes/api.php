@@ -20,6 +20,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->group(function(){
+//اشعارات داتابيز
+Route::get('/notifications',[UserController::class,'getNotifications']);
+
 Route::get('/books/recommended', [BookController::class, 'showBooksByUserInterests']);
     //التعليقات
     //إضافة تعليق

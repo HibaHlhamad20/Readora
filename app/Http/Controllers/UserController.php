@@ -171,6 +171,15 @@ public function getTransactions(Request $request)
 
 
 
+public function getNotifications()
+{
+    $notifications = auth()->user()->notifications()->latest()->get();
+
+    return response()->json([
+        'status' => true,
+        'data' => $notifications
+    ]);
+}
 
 
 

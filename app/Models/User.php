@@ -100,4 +100,9 @@ class User extends Authenticatable
         return $this->hasMany(Participation::class);
     }  
 
+    public function notifications()
+{
+    return $this->hasMany(Notification::class);
+}
+
 }
