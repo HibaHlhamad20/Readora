@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Book extends Model
 {
     protected $guarded = [];
+
+    protected $casts = ['book_images' => 'array'];
     
     public function authors ()
     {
@@ -42,5 +44,9 @@ class Book extends Model
     public function comments(){
         return $this->hasMany(Comment::class);
     }
+
+    public function events(){
+        return $this->belongsToMany(Event::class,'event_book','book_id','event_id');
+    }  
 
 }

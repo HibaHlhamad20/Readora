@@ -13,6 +13,8 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\ParticipationController;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +41,39 @@ Route::get('/books/recommended', [BookController::class, 'showBooksByUserInteres
     Route::post('/ratings/{id}',[BookController::class,'addRating']);
     //تعديل تقييم كتاب
     Route::put('/ratings/{id}',[BookController::class,'updateRating']);
+
+    //المشاركة بفعالية
+    Route::post('/participations/{event_id}',[ParticipationController::class,'addParticipation']);
+    //إلغاء المشاركة بفعالية
+    Route::delete('/participations/{participation_id}',[ParticipationController::class,'cancelParticipation']);
+    
+    //عرض الفعاليات القادمة
+    Route::get('/events/upcoming',[EventController::class,'showUpcomingEvents']);
+    //عرض الفعاليات الحالية
+    Route::get('/events/ongoing',[EventController::class,'showOngoingEvents']);
+    //عرض الفعاليات المنتهية
+    Route::get('/events/completed',[EventController::class,'showCompletedEvents']);
+    //عرض الفعاليات الملغية
+    Route::get('/events/cancelled',[EventController::class,'showCancelledEvents']);
+    //عرض الفعاليات اللي شارك فيها المستخدم
+    Route::get('/events/participations',[ParticipationController::class,'showAllParticipations']);
+    //عرض الفعاليات اللي ربح فيها المستخدم
+    Route::get('/events/wins',[ParticipationController::class,'showWinParticipations']);
+    //عرض الفعاليات اللي خسر فيها المستخدم
+    Route::get('/events/losses',[ParticipationController::class,'showLoseParticipations']);
+
+    //عرض فعالية قادمة
+    Route::get('/events/upcoming/{id}',[EventController::class,'showUpcomingEvent']);
+    //عرض فعالية حالية
+    Route::get('/events/ongoing/{id}',[EventController::class,'showOngoingEvent']);
+    //عرض فعالية منتهية
+    Route::get('/events/completed/{id}',[EventController::class,'showCompletedEvent']);
+    //عرض فعالية ملغية
+    Route::get('/events/cancelled/{id}',[EventController::class,'showCancelledEvent']);
+    //عرض فعالية مشترك بها + فاز أو خسر بها
+    Route::get('/events/cancelled/{id}',[EventController::class,'showParticipatedEvent']);
+
+
 
 //1
     Route::get('/user', function (Request $request) {
@@ -70,12 +105,13 @@ Route::get('/user/points_history',[UserController::class,'getPointsHistory']);
 //my books
 Route::get('/user/my-books', [UserController::class, 'getMyBooks']);
 //get purchase history
- Route::get('/user/purchases-history', [UserController::class, 'getPurchasesHistory']);
- 
- 
+Route::get('/user/purchases-history', [UserController::class, 'getPurchasesHistory']);
+
+
  //wallet transaction
  Route::get('/user/wallet_transaction',[UserController::class,'getTransactions']);
 //Route::get('/user/purchases-history', [UserController::class, 'getPurchasesHistory']);
+
 
 
 
@@ -105,22 +141,19 @@ Route::middleware('admin')->group(function()
     Route::get('/admin/users', [AdminDashboardController::class, 'getAllUsers']); 
     Route::get('/admin/users/{id}', [AdminDashboardController::class, 'getUserDetails']); 
 
+    //إضافة فعالية
+    Route::post('/events',[EventController::class,'addEvent']);
+    //تعديل فعالية
+    Route::put('/events/{id}',[EventController::class,'updateEvent']);
+    //إلغاء فعالية
+    Route::delete('/events/{id}',[EventController::class,'cancelEvent']);
+    //عرض كل الفعاليات
+    Route::get('/events',[EventController::class,'showEvents']);
+    //عرض فعالية معينة
+    Route::get('/events/{id}',[EventController::class,'showEvent']);
+
  });
 });  
-
-//   Route::middleware('user')->group(function()
-//  {
-//     //عرض 30 اقتراح كتاب حسب اهتمامات المستخدم
-//     Route::get('/books/recommended',[BookController::class,'showBooksByUserInterests']);
-//     //المفضلة
-//     //إضافة كتاب للمفضلة
-//     Route::post('/books/{id}/favourite',[BookController::class,'addToFavourite']);
-//     //حذف كتاب من المفضلة
-//     Route::delete('/books/{id}/favourite',[BookController::class,'removeFromFavourite']);
-//     //عرض جميع الكتب في المفضلة
-//     Route::get('/books/favourite',[BookController::class,'showFavourites']);
-
-//  });
 
 //without middleware
 //راوت تسجيل دخول الادمن جودي
@@ -153,20 +186,6 @@ Route::get('/books/search',[BookController::class,'searchBooks']);
 //بحث عن المؤلف حسب الاسم
 Route::get('/authors/search',[BookController::class,'searchAuthors']);
 
-//  Route::middleware('user')->group(function()
-//  {
-//عدلت هون
-// Route::middleware(['auth:sanctum'])->group(function()
-// {
-// //المفضلة
-// //إضافة كتاب للمفضلة
-// Route::post('/books/{id}/favourite',[BookController::class,'addToFavourite']);
-// //حذف كتاب من المفضلة
-// Route::delete('/books/{id}/favourite',[BookController::class,'removeFromFavourite']);
-// //عرض جميع الكتب في المفضلة
-// Route::get('/books/favourite',[BookController::class,'showFavourites']);
-
-//  });
 
 //1|h1nlWxHbF2slIOzkfMq0pjkl7Vy6yRqS4LGMCbJe93bb67bb//user
 //2|3ZPxmUWwSA6FuJvbPi80SF2YB3iLyS8Ym6fS5HQIc29a55a3
