@@ -71,7 +71,7 @@ Route::get('/books/recommended', [BookController::class, 'showBooksByUserInteres
     //عرض فعالية ملغية
     Route::get('/events/cancelled/{id}',[EventController::class,'showCancelledEvent']);
     //عرض فعالية مشترك بها + فاز أو خسر بها
-    Route::get('/events/cancelled/{id}',[EventController::class,'showParticipatedEvent']);
+    Route::get('/events/participated/{id}',[EventController::class,'showParticipatedEvent']);
 
 
 

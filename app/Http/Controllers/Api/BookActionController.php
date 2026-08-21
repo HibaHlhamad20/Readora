@@ -7,9 +7,12 @@ use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\Purchase;
 use App\Models\Borrowing;
+use App\Models\Event;
+use App\Models\Participation;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Services\FirebaseService;
+use Illuminate\Support\Facades\DB;
 
 class BookActionController extends Controller
 {
@@ -212,9 +215,19 @@ class BookActionController extends Controller
                 'message'=>'الكتاب متاح لك للقراءة'
             ],200);
         }
+        $events_id = DB::table('event_book')->where('book_id',$book_id)->pluck('event_id');
+        $event_ids = Event::whereIn('id',$events_id)->where('status','ongoing')->pluck('id');
+        $participation_ids = Participation::where('user_id',Auth::id())->where('status','joined')->whereIn('event_id',$event_ids)->pluck('id');
+        if ($participation_ids->isNotEmpty()) {
+            return response()->json([
+                'has_access'=>true,
+                'message'=>'Book is available as part of the event'
+            ],200);
+        }
         return response()->json([
             'has_access'=>false,
             'message'=>'عذرا هذا الكتاب مغلق ! يجب عليك شراؤه او استعارته'
         ],200);
+
     }
 }
