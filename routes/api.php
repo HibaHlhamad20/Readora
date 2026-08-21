@@ -72,6 +72,10 @@ Route::get('/books/recommended', [BookController::class, 'showBooksByUserInteres
     Route::get('/events/cancelled/{id}',[EventController::class,'showCancelledEvent']);
     //عرض فعالية مشترك بها + فاز أو خسر بها
     Route::get('/events/participated/{id}',[EventController::class,'showParticipatedEvent']);
+    //عرض الكويزات التي فاز بها
+    Route::get('/quizzes/win',[ParticipationController::class,'showWinQuizes']);
+    //عرض الفعاليات والكويزات كلهن الفاز فيهن المستخدم تبع واجهة my wins
+    Route::get('/my_wins',[ParticipationController::class,'getMyWinsOverview']);
 
 
 

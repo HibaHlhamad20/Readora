@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Participation;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -54,10 +55,74 @@ class ParticipationController extends Controller
     }
 
     public function showWinParticipations () {
-        $event_ids = Participation::where('user_id',Auth::id())->where('status','finished')->pluck('event_id');
-        $events = Event::whereIn('id',$event_ids)->with(['books'])->orderBy('created_at','desc')->get();
+        // $event_ids = Participation::where('user_id',Auth::id())->where('status','finished')->pluck('event_id');
+        // $events = Event::whereIn('id',$event_ids)->with(['books'])->orderBy('created_at','desc')->get();
 
-        return response()->json($events,200);
+        // return response()->json($events,200);
+
+        
+    $participations = Participation::where('user_id', Auth::id())
+        ->where('status', 'finished')
+        ->with(['event' => function($query) {
+            $query->with('books');
+        }])
+        ->orderBy('updated_at', 'desc')
+        ->get();
+
+    
+    $events = $participations->map(function ($participation) {
+        return [
+            'participation_id' => $participation->id,
+            'event_id'         => $participation->event->id ?? null,
+            'event_name'       => $participation->event->event_name ?? '',
+            'points'           => $participation->event->points ?? 0,
+            'date'             => $participation->updated_at->format('Y-m-d'), 
+            'books'            => $participation->event->books ?? [],
+        ];
+    });
+
+    return $events;
+    }
+
+    public function showWinQuizes(Request $request){
+        
+    $user = $request->user();
+
+    $quizzes = $user->completedBooks()
+        ->orderBy('book_user.created_at', 'desc')
+        ->get()
+        ->map(function ($book) {
+            return [
+                'type'   => 'Quiz',
+                'title'  => $book->book_name,
+                'points' => $book->pivot->points ?? 0 ,
+                'date'   => $book->pivot->created_at 
+                            ? \Carbon\Carbon::parse($book->pivot->created_at)->format('d M Y') 
+                            : '',
+            ];
+        });
+
+    return $quizzes;
+    }
+
+    public function getMyWinsOverview()
+    {
+    
+    $events = $this->showWinParticipations();
+
+    
+    $quizzes = $this->showWinQuizes();
+
+    
+    $totalWins = count($events) + count($quizzes);
+
+    return response()->json([
+        'status'     => true,
+        'total_wins' => $totalWins,
+        'wins'       => $events->concat($quizzes), 
+        'events'     => $events,
+        'quizzes'    => $quizzes,
+    ], 200);
     }
 
     public function showLoseParticipations () {

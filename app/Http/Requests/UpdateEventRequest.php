@@ -24,7 +24,7 @@ class UpdateEventRequest extends FormRequest
     {
         return [
             'event_name' => 'nullable|string|max:200',
-            'start_date' => 'nullable|date|after_or_equal:today',
+            'start_date' => 'nullable|date|after_or_equal:now',
             'end_date' => 'nullable|date',
             'book_ids' => 'nullable|array|min:1',
             'book_ids.*' => 'exists:books,id',

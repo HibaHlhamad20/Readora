@@ -24,7 +24,7 @@ class StoreEventRequest extends FormRequest
     {
         return [
             'event_name' => 'required|string|max:200',
-            'start_date' => 'required|date|after_or_equal:today',
+            'start_date' => 'required|date|after_or_equal:now',
             'end_date' => 'required|date|after:start_date',
             'book_ids' => 'required|array|min:1',
             'book_ids.*' => 'exists:books,id',
