@@ -9,6 +9,7 @@ use App\Models\Purchase;
 use App\Models\Borrowing;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Services\FirebaseService;
 
 class BookActionController extends Controller
 {
@@ -73,6 +74,19 @@ class BookActionController extends Controller
             'price' => $finalPrice,
             'discount_type' => $request->discount_package === 'none' ? 'none' : 'points',
         ]);
+
+
+        
+    
+    if (!empty($user->fcm_token)) {
+        FirebaseService::sentNotification(
+            $user->fcm_token,
+            'مبارك إضافتك الجديدة! 📚🎉',
+            "تم شراء كتاب \"{$book->title}\" بنجاح، وأصبح متاحاً في مكتبتك الخاصة مدى الحياة!"
+        );
+    }
+
+    
 
         return response()->json([
             'message' => 'تم شراء الكتاب بنجاح وتم فتحه لك مدى الحياة!',
@@ -157,6 +171,16 @@ class BookActionController extends Controller
             'expires_at' => $expiresAt,
             'status' => 'active'
         ]);
+
+        
+        if (!empty($user->fcm_token)) {
+            FirebaseService::sentNotification(
+                $user->fcm_token,
+                'استعارة مباركة! 📖',
+                "تمت استعارة كتاب {$book->title} بنجاح! فترة الاستعارة متاحة حتى " . $expiresAt->format('Y-m-d')
+            );
+        }
+
 
         return response()->json([
             'message' => 'تم استعارة الكتاب بنجاح لمدة شهر واحد!',

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Question;
 use App\Models\Book;
 use App\Models\User;
+use App\Services\FirebaseService;
 
 class QuizController extends Controller
 {
@@ -163,6 +164,14 @@ public function submitQuiz(Request $request)
 
     
     if ($passed) {
+           if (!empty($user->fcm_token)) {
+            FirebaseService::sentNotification(
+                $user->fcm_token,
+                'تهانينا! 🎉',
+                "لقد أجبت على جميع الأسئلة بشكل صحيح وحصلت على {$pointsToEarn} نقاط جديدة!"
+            );
+        }
+
         return response()->json([
             'passed' => true,
             'correct_answers' => $correctCount,

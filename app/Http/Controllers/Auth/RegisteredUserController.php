@@ -50,6 +50,8 @@ class RegisteredUserController extends Controller
 
         ]);
 
+     
+
         $user->categories()->attach($request->interests);
         $user->load('categories');
         

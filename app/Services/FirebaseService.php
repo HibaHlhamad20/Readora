@@ -21,7 +21,7 @@ class FirebaseService
             $messaging->send($message);
             return true;
         } catch (\Exception $e) {
-         \Log::error("FCM Error: " . $e->getMessage());
+         Log::error("FCM Error: " . $e->getMessage());
           return false;
         }
     }

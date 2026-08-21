@@ -57,6 +57,7 @@ class WalletController extends Controller
             $user=$chargingRequest->user;
             $user->increment('wallet',$chargingRequest->amount);
 
+            $fcmToken=$user->fcm_token;
             FirebaseService::sentNotification(
                 $user->fcm_token,
                'تم شحن رصيدك بنجاح! ✅', 
@@ -94,6 +95,7 @@ class WalletController extends Controller
         ]);
 
          $user=$chargingRequest->user;
+         $fcmToken=$user->fcm_token;
          FirebaseService::sentNotification(
             $user->fcm_token,
             'عذرا، تم رفض طلب الشحن ❌',
