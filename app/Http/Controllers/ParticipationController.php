@@ -73,9 +73,9 @@ class ParticipationController extends Controller
     
 
 
-    public function showWinQuizes(Request $request){
+    public function showWinQuizes(){
         
-    $user = $request->user();
+    $user = Auth::user();
 
     $quizzes = $user->completedBooks()
         ->orderBy('book_user.created_at', 'desc')

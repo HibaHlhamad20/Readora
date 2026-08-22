@@ -193,5 +193,4 @@ class EventController extends Controller
             'books_count'=>$books_count
         ]),200);
     }
- 
 }
