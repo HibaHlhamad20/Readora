@@ -129,6 +129,10 @@ Route::get('/user/purchases-history', [UserController::class, 'getPurchasesHisto
 //راوتات الادمن 
 Route::middleware('admin')->group(function()
  {
+    // انشاء ادمن 
+      Route::post('/create-admin', [AdminDashboardController::class, 'addAdmin']);
+
+
     Route::get('/pending_request',[WalletController::class,'getPendingRequet']);
     Route::post('/approve_request/{id}',[WalletController::class,'approveRequest']);
     Route::post('/reject_request/{id}',[WalletController::class,'rejectRequest']);

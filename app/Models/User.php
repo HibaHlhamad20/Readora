@@ -28,7 +28,8 @@ class User extends Authenticatable
        // 'interests',
         'user_image',
         'wallet',
-        'fcm_token'
+        'fcm_token',
+        'role'
     ];
     // protected $appends = ['level'];
     // public function getLevelAttribute(){

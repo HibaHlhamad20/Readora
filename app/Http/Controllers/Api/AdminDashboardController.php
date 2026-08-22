@@ -8,6 +8,10 @@ use App\Models\Book;
 use App\Models\Purchase;
 use App\Models\Borrowing;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rules;
 
 class AdminDashboardController extends Controller
 {
@@ -124,6 +128,34 @@ public function getUserDetails($id)
             'borrowings_count' => $borrowingsCount
         ]
     ], 200);
+}
+
+//................................................
+
+
+
+public function addAdmin(Request $request)
+{
+    
+    $request->validate([
+        'name'     => 'required|string|max:255',
+        'email'    => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8',
+    ]);
+
+    
+    $admin = User::create([
+        'name'     => $request->name,
+        'email'    => $request->email,
+        'password' => Hash::make($request->password),
+        'role'     => 'admin', 
+    ]);
+
+    return response()->json([
+        'status'  => true,
+        'message' => 'تم إضافة المسؤول (Admin) بنجاح',
+        'data'    => $admin
+    ], 201);
 }
 
 }
